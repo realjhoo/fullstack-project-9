@@ -30,6 +30,7 @@ async () => {
       const svError = error.errors.map(err => err.message);
       console.error("Sequelize Validation Error: ", svError);
     } else {
+      console.log("Uncaught Database error");
       throw error;
     }
   }
@@ -66,5 +67,7 @@ app.set("port", process.env.PORT || 5000);
 
 // start listening on our port
 const server = app.listen(app.get("port"), () => {
+  console.log("* * * * * * * * * * * * * * * * * * * * * * *");
+
   console.log(`Express server is listening on port ${server.address().port}`);
 });

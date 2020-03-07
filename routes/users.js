@@ -3,6 +3,18 @@ const auth = require("basic-auth");
 const bcryptjs = require("bcryptjs");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
+// TESTING
+const { User } = require("../models").models;
+const Sequelize = require("sequelize");
+
+// const users = [
+//   {
+//     firstName: "Joe",
+//     lastName: "Smith",
+//     emailAddress: "joe@smith.com",
+//     password: "joepassword"
+//   }
+// ];
 
 // ========================================================
 // error wrapper function
@@ -18,17 +30,22 @@ function asyncHandler(cb) {
 
 // ========================================================
 // Authentication from earlier lesson
-const authenticateUser = (req, res, next) => {
+const authenticateUser = async (req, res, next) => {
   let message = null;
+
+  // get the db info
+  const users = await User.findAll();
   // Parse the user's credentials from the Authorization header.
   const credentials = auth(req);
-
+  // console.log("Credentials.name: " + JSON.stringify(credentials));
+  console.log("Credentials.name: " + credentials);
   // If the user's credentials are available...
   if (credentials) {
     // Attempt to retrieve the user from the data store
     // by their username (i.e. the user's "key"
     // from the Authorization header).
-    const user = users.find(u => u.username === credentials.name);
+    const user = users.find(user => user.emailAddress === credentials.name);
+    // const user = users.find(user => user.emailAddress === credentials.name);
 
     // If a user was successfully retrieved from the data store...
     if (user) {
@@ -42,7 +59,7 @@ const authenticateUser = (req, res, next) => {
 
       // If the passwords match...
       if (authenticated) {
-        console.log(`Authentication successful for ${user.username}`);
+        console.log(`Authentication successful for ${user.emailAddress}`);
 
         // Then store the retrieved user object on the request object
         // so any middleware functions that follow this middleware function
@@ -71,19 +88,36 @@ const authenticateUser = (req, res, next) => {
 };
 
 // ======== USER ROUTES ===================================
+router.get(
+  "/users",
+  authenticateUser,
+  asyncHandler(async (req, res) => {
+    const user = req.currentUser;
+    res.json({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      emailAddress: user.emailAddress
+    });
+  })
+);
+
 router.post(
   "/users",
-  [
-    check("name")
-      .exists({ checkNull: true, checkFalst: true })
-      .withMessage("Please provide a NAME value."),
-    check("username")
-      .exists({ checkNull: true, checkFalst: true })
-      .withMessage("Please provide a USERNAME value."),
-    check("password")
-      .exists({ checkNull: true, checkFalst: true })
-      .withMessage("Please provide a PASSWORD value.")
-  ],
+  // [
+  //   check("firstName")
+  //     .exists({ checkNull: true, checkFalse: true })
+  //     .withMessage("Please provide a FIRST-NAME value."),
+  //   check("lastName")
+  //     .exists({ checkNull: true, checkFalse: true })
+  //     .withMessage("Please provide a LAST-NAME value."),
+  //   check("emailAddress")
+  //     .exists({ checkNull: true, checkFalse: true })
+  //     .withMessage("Please provide an EMAIL value."),
+  //   check("password")
+  //     .exists({ checkNull: true, checkFalse: true })
+  //     .withMessage("Please provide a PASSWORD value.")
+  // ],
   (req, res) => {
     const errors = validationResult(req);
 
