@@ -3,10 +3,12 @@
 // load modules
 const express = require("express");
 const morgan = require("morgan");
-const users = require("./routes/users");
-const courses = require("./routes/courses");
 const { sequelize } = require("./models");
 const bodyParser = require("body-parser");
+// route module
+// const users = require("./routes/users");
+// const courses = require("./routes/courses");
+const routes = require("./routes/routes");
 
 // variable to enable global error logging
 const enableGlobalErrorLogging =
@@ -20,10 +22,12 @@ app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// TODO setup your api routes here
-app.use("/api", users);
-app.use("/api", courses);
+// Routes
+// app.use("/api", users);
+// app.use("/api", courses);
+app.use("/api", routes);
 
+// access db
 async () => {
   try {
     await sequelize.authenticate();
@@ -33,7 +37,7 @@ async () => {
       const svError = error.errors.map(err => err.message);
       console.error("Sequelize Validation Error: ", svError);
     } else {
-      console.log("Uncaught Database error");
+      console.log("Something went wrong! Sorry... that's all I know.");
       throw error;
     }
   }
@@ -46,14 +50,14 @@ app.get("/", (req, res) => {
   });
 });
 
-// send 404 if no other route matched
+// No route match... so 404 Not Found
 app.use((req, res) => {
   res.status(404).json({
     message: "Route Not Found"
   });
 });
 
-// setup a global error handler
+// *** ERROR HANDLER ***
 app.use((err, req, res, next) => {
   if (enableGlobalErrorLogging) {
     console.error(`Global error handler: ${JSON.stringify(err.stack)}`);
@@ -70,10 +74,7 @@ app.set("port", process.env.PORT || 5000);
 
 // start listening on our port
 const server = app.listen(app.get("port"), () => {
-  console.log(
-    "%c* * * * * * * * * * * * * * * * * * * * * * *",
-    "color: black; background-color: red"
-  ); // doesnt work... too bad
-
+  // visual cue for top of terminal output
+  console.log("* * * * * * * * * * * * * * * * * * * * * * *");
   console.log(`Express server is listening on port ${server.address().port}`);
 });

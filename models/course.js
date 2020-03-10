@@ -14,7 +14,7 @@ module.exports = sequelize => {
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: "Please enter a valid title."
+            msg: "Please enter a valid course title."
           }
         }
       },
@@ -23,7 +23,7 @@ module.exports = sequelize => {
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: "Please enter a valid description."
+            msg: "Please enter a valid course description."
           }
         }
       },
@@ -39,7 +39,6 @@ module.exports = sequelize => {
 
   Course.associate = models => {
     Course.belongsTo(models.User, {
-      as: "userInfo",
       foreignKey: {
         fieldName: "userId",
         allowNull: false

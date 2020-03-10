@@ -2,8 +2,9 @@
 const express = require("express");
 const auth = require("basic-auth");
 const bcryptjs = require("bcryptjs");
-const router = express.Router();
 const { check, validationResult } = require("express-validator");
+const router = express.Router();
+
 // TESTING
 const { User } = require("../models").models;
 const Sequelize = require("sequelize");
