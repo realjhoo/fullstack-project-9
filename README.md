@@ -1,20 +1,20 @@
 
 # Full Stack JavaScript Techdegree v2 - REST API Project
 
-## Overview of the Provided Project Files
+## Featuring the SERN Stack... well... SEN Stack
 
-We've supplied the following files for you to use: 
+* Sequelize and SQLite
+* Express
+* React (okay... not React... that's the next iteration of this project!)
+* Node.js
 
-* The `seed` folder contains a starting set of data for your database in the form of a JSON file (`data.json`) and a collection of files (`context.js`, `database.js`, and `index.js`) that can be used to create your app's database and populate it with data (we'll explain how to do that below).
-* We've included a `.gitignore` file to ensure that the `node_modules` folder doesn't get pushed to your GitHub repo.
-* The `app.js` file configures Express to serve a simple REST API. We've also configured the `morgan` npm package to log HTTP requests/responses to the console. You'll update this file with the routes for the API. You'll update this file with the routes for the API.
-* The `nodemon.js` file configures the nodemon Node.js module, which we are using to run your REST API.
-* The `package.json` file (and the associated `package-lock.json` file) contain the project's npm configuration, which includes the project's dependencies.
-* The `RESTAPI.postman_collection.json` file is a collection of Postman requests that you can use to test and explore your REST API.
+## What Does It Do?
+
+The Rest API project allows you, the user, to create descriptions of educational courses, and allow only authorized users to edit, delete and make changes to those courses. The REST API project features user authentication. Using this system you could build the next Treehouse.
 
 ## Getting Started
 
-To get up and running with this project, run the following commands from the root of the folder that contains this README file.
+To get up and running with this project, download the files in this repo to the folder of your choosing, then run the following commands from the folder that contains this README file.
 
 First, install the project's dependencies using `npm`.
 
@@ -36,3 +36,41 @@ npm start
 ```
 
 To test the Express server, browse to the URL [http://localhost:5000/](http://localhost:5000/).
+
+# Full Stack JavaScript Techdegree v2 - REST-API Projekto
+
+## Prezentanta la SERN-Stakon ... bone ... SEN Stack
+
+* Sekvu kaj SQLite
+* Esprimi
+* Reagi (bone ... ne reagi ... jen la sekva ripeto de ĉi tiu projekto!)
+* Nodo.js
+
+## Kio Faras?
+
+La projekto Ripo API permesas vin, la uzanto, krei priskribojn de edukaj kursoj, kaj permesas nur rajtigitajn uzantoj redakti, forigi kaj fari ŝanĝojn al tiuj kursoj. La projekto REST API prezentas uzantan aŭtentikigon. Uzante ĉi tiun sistemon vi povus konstrui la sekvan Treehouse.
+
+## Komencante
+
+Por plenumi kaj funkcii kun ĉi tiu projekto, elŝutu la dosierojn de ĉi tiu dokumento en la dosierujon, kiun vi elektas, kaj sekvu la jenajn komandojn el la dosierujo, kiu enhavas ĉi tiun README-dosieron.
+
+Unue, instalu la dependojn de la projekto uzante `npm`.
+
+`` `
+npm instali
+
+`` `
+
+Due, semu la SQLite-datumbazon.
+
+`` `
+npm kuras semon
+`` `
+
+Kaj laste, komencu la aplikon.
+
+`` `
+npm komenco
+`` `
+
+Por testi la Express-servilon, traserĉu al la URL [http: // localhost: 5000 /] (http: // localhost: 5000 /).
