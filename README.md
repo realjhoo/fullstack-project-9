@@ -57,7 +57,6 @@ Unue, instalu la dependojn de la projekto uzante `npm`.
 
 ```
 npm instali
-
 ```
 
 Due, semu la SQLite-datumbazon.
