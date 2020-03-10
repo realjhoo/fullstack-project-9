@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const users = require("./routes/users");
 const courses = require("./routes/courses");
 const { sequelize } = require("./models");
+const bodyParser = require("body-parser");
 
 // variable to enable global error logging
 const enableGlobalErrorLogging =
@@ -14,8 +15,10 @@ const enableGlobalErrorLogging =
 // create the Express app
 const app = express();
 
-// setup morgan which gives us http request logging
+// setup to use morgan, urlencoded and bodyParser
 app.use(morgan("dev"));
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // TODO setup your api routes here
 app.use("/api", users);
@@ -67,7 +70,10 @@ app.set("port", process.env.PORT || 5000);
 
 // start listening on our port
 const server = app.listen(app.get("port"), () => {
-  console.log("* * * * * * * * * * * * * * * * * * * * * * *");
+  console.log(
+    "%c* * * * * * * * * * * * * * * * * * * * * * *",
+    "color: black; background-color: red"
+  ); // doesnt work... too bad
 
   console.log(`Express server is listening on port ${server.address().port}`);
 });
