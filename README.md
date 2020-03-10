@@ -20,7 +20,6 @@ First, install the project's dependencies using `npm`.
 
 ```
 npm install
-
 ```
 
 Second, seed the SQLite database.
@@ -56,21 +55,21 @@ Por plenumi kaj funkcii kun ĉi tiu projekto, elŝutu la dosierojn de ĉi tiu do
 
 Unue, instalu la dependojn de la projekto uzante `npm`.
 
-`` `
+```
 npm instali
 
-`` `
+```
 
 Due, semu la SQLite-datumbazon.
 
-`` `
+```
 npm kuras semon
-`` `
+```
 
 Kaj laste, komencu la aplikon.
 
-`` `
+```
 npm komenco
-`` `
+```
 
-Por testi la Express-servilon, traserĉu al la URL [http: // localhost: 5000 /] (http: // localhost: 5000 /).
+Por testi la Express-servilon, traserĉu al la URL [http://localhost:5000/] (http://localhost:5000/).
