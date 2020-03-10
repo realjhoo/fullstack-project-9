@@ -16,6 +16,7 @@ const Sequelize = require("sequelize");
 // into a seperate module, and have a users route module
 //  and a courses route module... but I dont know how
 // so I'll just put everything here to be DRY
+
 // ========================================================
 // error wrapper function
 function asyncHandler(cb) {
@@ -24,6 +25,7 @@ function asyncHandler(cb) {
       await cb(req, res, next);
     } catch (error) {
       res.status(500).json({ message: error.message });
+      // next(error);
     }
   };
 }
@@ -33,33 +35,27 @@ function asyncHandler(cb) {
 const authenticateUser = async (req, res, next) => {
   let message = null;
 
-  // get the db user info
+  // get the db user info and parse the Authorization Header
   const users = await User.findAll();
-  // Parse the user's credentials from the Authorization header.
   const credentials = auth(req);
 
-  // If the user's credentials are available...
+  // If the user's credentials are available, get user from data
   if (credentials) {
-    // Attempt to retrieve the user from the data store
     const user = users.find(user => user.emailAddress === credentials.name);
 
-    // If a user was successfully retrieved from the data store...
+    // If user was retrieved, compare password with hashed password...
     if (user) {
-      // Use bcryptjs to compare the user's password to the hashed password in db
       const authenticated = bcryptjs.compareSync(
         credentials.pass,
         user.password
       );
 
-      // If the passwords match...
+      // If the passwords match, store user in req for further access
       if (authenticated) {
         console.log(`Authentication successful for ${user.emailAddress}`);
-
-        // Store retrieved user object on the request object
-        // so middleware will have access to user's information.
         req.currentUser = user;
       } else {
-        // Set an error message is something went wrong
+        // Set an error message if something went wrong
         message = `Authentication failure for ${user.username}`;
       }
     } else {
@@ -69,13 +65,12 @@ const authenticateUser = async (req, res, next) => {
     message = "Auth header not found";
   }
 
-  // If user authentication failed...
+  // If user authentication failed, return the error message
   if (message) {
     console.warn(message);
-    // Return 401 Unauthorized
-    res.status(401).json({ message: "Access Denied * = *" });
+    res.status(401).json({ message: "Access denied." });
   } else {
-    // Or if user authentication succeeded...
+    // user authentication succeeded...
     next();
   }
 };
@@ -96,22 +91,6 @@ router.get(
   })
 );
 
-// might need this for validation checking... leave here for now
-// [
-//   check("firstName")
-//     .exists({ checkNull: true, checkFalse: true })
-//     .withMessage("Please provide a FIRST-NAME value."),
-//   check("lastName")
-//     .exists({ checkNull: true, checkFalse: true })
-//     .withMessage("Please provide a LAST-NAME value."),
-//   check("emailAddress")
-//     .exists({ checkNull: true, checkFalse: true })
-//     .withMessage("Please provide an EMAIL value."),
-//   check("password")
-//     .exists({ checkNull: true, checkFalse: true })
-//     .withMessage("Please provide a PASSWORD value.")
-// ],
-
 // NEW USER Route * * WORKING * *
 router.post(
   "/users",
@@ -119,21 +98,16 @@ router.post(
     console.log("In the /user root route");
 
     const errors = validationResult(req);
-
     if (!errors.isEmpty()) {
       const errorMessages = errors.array().map(error => error.msg);
-
       // return res.status(400).json({ errors: errorMessages });
       res.status(400).json({ errors: errorMessages });
     } else {
       // get the user from the request body
       const user = req.body;
-
       user.password = bcryptjs.hashSync(user.password);
-
       // create user in database
       await User.create(user);
-
       // set status to 201, send to root and end
       res
         .status(201)
@@ -144,7 +118,7 @@ router.post(
 );
 
 // ======== COURSES ROUTES ===================================
-// get courses route * * * IN PROGRESS * * *
+// get Courses route * * * WORKING * * *
 router.get(
   "/courses",
   asyncHandler(async (req, res) => {
@@ -165,7 +139,7 @@ router.get(
   })
 );
 
-// get Course
+// get Course route * * * WORKING * * *
 router.get(
   "/courses/:id",
   asyncHandler(async (req, res) => {
@@ -186,7 +160,7 @@ router.get(
   })
 );
 
-// Create Course
+// Create Course Route * * * WORKING * * *
 router.post(
   "/courses",
   authenticateUser,
@@ -212,20 +186,21 @@ router.post(
   })
 );
 
-// Update Course
+// Update Course route * * * WORKING * * *
+// use validation .check from Unit 9 lesson
 router.put(
   "/courses/:id",
   authenticateUser,
   [
     check("title")
       .exists()
-      .withMessage("Please provide a course title."),
+      .withMessage("You must provide a course title."),
     check("description")
       .exists()
-      .withMessage("Please provide a course description"),
+      .withMessage("You must provide a course description"),
     check("userId")
       .exists()
-      .withMessage("Please provide a User ID")
+      .withMessage("You must provide a User ID")
   ],
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
@@ -247,11 +222,7 @@ router.put(
   })
 );
 
-// **************************************************************************************************************************************************************************************************************************
-// error should be caufghght here with a 403, but is being caught
-// on line 76 with a 401
-
-// Delete Course
+// Delete Course route * * * WORKING * * *
 router.delete(
   "/courses/:id",
   authenticateUser,
@@ -265,8 +236,10 @@ router.delete(
       } else {
         res
           .status(403)
-          .json({ message: "User unauthorized to delete this course." });
+          .json({ message: "User not authorized to delete this course." });
       }
+    } else {
+      next();
     }
   })
 );

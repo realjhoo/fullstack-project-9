@@ -6,8 +6,6 @@ const morgan = require("morgan");
 const { sequelize } = require("./models");
 const bodyParser = require("body-parser");
 // route module
-// const users = require("./routes/users");
-// const courses = require("./routes/courses");
 const routes = require("./routes/routes");
 
 // variable to enable global error logging
@@ -23,8 +21,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Routes
-// app.use("/api", users);
-// app.use("/api", courses);
 app.use("/api", routes);
 
 // access db
