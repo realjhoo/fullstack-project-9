@@ -4,13 +4,10 @@ const express = require("express");
 const auth = require("basic-auth");
 const bcryptjs = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
+const { User, Course } = require("../models").models;
 
 // Const vars
 const router = express.Router();
-
-// TESTING
-const { User, Course } = require("../models").models;
-const Sequelize = require("sequelize");
 
 // I'd like to seperate asyncHandler and authenticateUser
 // into a seperate module, and have a users route module
@@ -24,8 +21,7 @@ function asyncHandler(cb) {
     try {
       await cb(req, res, next);
     } catch (error) {
-      res.status(500).json({ message: error.message });
-      // next(error);
+      next(error);
     }
   };
 }
@@ -33,14 +29,14 @@ function asyncHandler(cb) {
 // ========================================================
 // Authentication from earlier lesson
 const authenticateUser = async (req, res, next) => {
-  let message = null;
-
+  let message = null; // initialize message
   // get the db user info and parse the Authorization Header
-  const users = await User.findAll();
   const credentials = auth(req);
 
   // If the user's credentials are available, get user from data
   if (credentials) {
+    // store all data in users, then get specific user
+    const users = await User.findAll();
     const user = users.find(user => user.emailAddress === credentials.name);
 
     // If user was retrieved, compare password with hashed password...
@@ -56,7 +52,7 @@ const authenticateUser = async (req, res, next) => {
         req.currentUser = user;
       } else {
         // Set an error message if something went wrong
-        message = `Authentication failure for ${user.username}`;
+        message = `Authentication failure for ${user.emailAddress}`;
       }
     } else {
       message = `User not found: ${credentials.name}`;
@@ -68,7 +64,7 @@ const authenticateUser = async (req, res, next) => {
   // If user authentication failed, return the error message
   if (message) {
     console.warn(message);
-    res.status(401).json({ message: "Access denied." });
+    res.status(401).json({ message: "Access denied" });
   } else {
     // user authentication succeeded...
     next();
@@ -95,12 +91,9 @@ router.get(
 router.post(
   "/users",
   asyncHandler(async (req, res) => {
-    console.log("In the /user root route");
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const errorMessages = errors.array().map(error => error.msg);
-      // return res.status(400).json({ errors: errorMessages });
       res.status(400).json({ errors: errorMessages });
     } else {
       // get the user from the request body
@@ -212,7 +205,7 @@ router.put(
       const course = await Course.findByPk(req.params.id);
       if (user.id === course.userId) {
         await course.update(req.body);
-        res.status(200).end();
+        res.status(204).end();
       } else {
         res
           .status(403)
@@ -232,7 +225,7 @@ router.delete(
     if (course) {
       if (user.id === course.userId) {
         await course.destroy();
-        res.status(200).end();
+        res.status(204).end();
       } else {
         res
           .status(403)

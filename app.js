@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 app.use("/api", routes);
 
 // access db
-async () => {
+(async () => {
   try {
     await sequelize.authenticate();
     console.log("Connected to database");
@@ -37,7 +37,7 @@ async () => {
       throw error;
     }
   }
-};
+})();
 
 // setup a friendly greeting for the root route
 app.get("/", (req, res) => {
@@ -58,8 +58,11 @@ app.use((err, req, res, next) => {
   if (enableGlobalErrorLogging) {
     console.error(`Global error handler: ${JSON.stringify(err.stack)}`);
   }
-
-  res.status(err.status || 500).json({
+  // hack
+  if (err.message === "Illegal arguments: undefined, string") {
+    err.message = "Bad Request";
+  }
+  res.status(err.status || 400).json({
     message: err.message,
     error: {}
   });
